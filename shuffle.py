@@ -37,7 +37,7 @@ class ShuffableListWithDependencies(list):
 
         self.dependencies = dependencies
 
-    def shuffle(self):
+    def shuffle(self) -> 'ShuffableListWithDependencies':
         forwardMap = defaultdict(set)
         backwardMap = defaultdict(set)
         shuffled = []
