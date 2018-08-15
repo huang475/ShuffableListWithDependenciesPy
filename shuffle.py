@@ -35,7 +35,6 @@ class ShuffableListWithDependencies(list):
         if (loopcheck(dependencies)):
             raise Exception("loop detected")
 
-        self.l = l
         self.dependencies = dependencies
 
     def shuffle(self):
@@ -46,11 +45,11 @@ class ShuffableListWithDependencies(list):
             forwardMap[dependency[0]].add(dependency[1])
             backwardMap[dependency[1]].add(dependency[0])
 
-        trackers = dict([ (n, DependencyMatchTracker(n, backwardMap[n])) for n in self.l ])
+        trackers = dict([ (n, DependencyMatchTracker(n, backwardMap[n])) for n in self ])
 
-        toShuffle = ShuffableListWithDependencies(list(filter(lambda i: len(backwardMap[i]) == 0, self.l)), self.dependencies)
+        toShuffle = ShuffableListWithDependencies(list(filter(lambda i: len(backwardMap[i]) == 0, self)), self.dependencies)
 
-        while len(shuffled) != len(self.l):
+        while len(shuffled) != self.__len__():
             pickoutIdx = int(random.random() * len(toShuffle)) 
             pickOut = pickOutItemFromArrayListUseSwap(toShuffle, pickoutIdx)
 
