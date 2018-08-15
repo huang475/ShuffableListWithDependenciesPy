@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, MutableSequence
 import random
 from typing import TypeVar, List, Tuple
 
@@ -26,8 +26,9 @@ def loopcheck(dependencies: List[Tuple[T, T]]):
     # TODO
     return False
 
-class ShuffableListWithDependencies:
+class ShuffableListWithDependencies(list):
     def __init__(self, l: List[T], dependencies: List[Tuple[T, T]]):
+        list.__init__(self, l)
         if (len(set(l)) != len(l)):
             raise Exception("l should have distinct values")
 
@@ -47,7 +48,7 @@ class ShuffableListWithDependencies:
 
         trackers = dict([ (n, DependencyMatchTracker(n, backwardMap[n])) for n in self.l ])
 
-        toShuffle = list(filter(lambda i: len(backwardMap[i]) == 0, self.l))
+        toShuffle = ShuffableListWithDependencies(list(filter(lambda i: len(backwardMap[i]) == 0, self.l)), self.dependencies)
 
         while len(shuffled) != len(self.l):
             pickoutIdx = int(random.random() * len(toShuffle)) 
@@ -81,7 +82,7 @@ class DependencyMatchTracker:
 if __name__ == "__main__":
     sl = ShuffableListWithDependencies([1, 2, 3, 4, 5, 6], [(2, 4), (4, 6)])
     situations = {}
-    for _ in range(10000):
+    for _ in range(1000):
         afterShuffle = sl.shuffle()  
         afterShuffleString = str(afterShuffle)
         if (situations.get(afterShuffleString, None)) is not None: 
